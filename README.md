@@ -1,6 +1,6 @@
 Weather App
 
-Overview
+Overview:
 responsive Weather Application built using HTML, CSS, and JavaScript. It allows users to input a city name and retrieve the current weather conditions, including temperature, humidity, and a description of the weather, all fetched from the OpenWeatherMap API.
 
 Features
