@@ -39,7 +39,7 @@ class WeatherApp {
         }
     }
 
-    
+
     displayWeather(data) {
         const { name, main, weather } = data;
         document.getElementById("cityName").innerText = `Weather in ${name}`;
