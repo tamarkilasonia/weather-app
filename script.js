@@ -49,7 +49,6 @@ class WeatherApp {
 
         this.weatherInfo.classList.remove("hidden");
     }
-
     showError(message) {
         this.errorMessage.innerText = message;
         this.errorMessage.classList.remove("hidden");
