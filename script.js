@@ -17,7 +17,6 @@ class WeatherApp {
             this.showError("Please enter a city name.");
             return;
         }
-
         const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.apiKey}&units=metric`;
 
         this.loading.classList.remove("hidden");
