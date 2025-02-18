@@ -1,34 +1,65 @@
-document.getElementById("getWeather").addEventListener("click", getWeather);
+class WeatherApp {
+    constructor() {
+        this.apiKey = "YOUR_API_KEY"; // Replace with your OpenWeatherMap API key
+        this.cityInput = document.getElementById("city");
+        this.weatherInfo = document.getElementById("weatherInfo");
+        this.errorMessage = document.getElementById("errorMessage");
+        this.loading = document.getElementById("loading");
+        this.themeToggle = document.getElementById("themeToggle");
 
-function getWeather() {
-    const city = document.getElementById("city").value;
-    const apiKey = "YOUR_API_KEY"; // Replace this with your actual OpenWeatherMap API key
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        document.getElementById("getWeather").addEventListener("click", () => this.getWeather());
+        this.themeToggle.addEventListener("click", () => this.toggleDarkMode());
+    }
 
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.cod === "404") {
-                alert("City not found!");
-            } else {
-                displayWeather(data);
+    async getWeather() {
+        const city = this.cityInput.value.trim();
+        if (!city) {
+            this.showError("Please enter a city name.");
+            return;
+        }
+
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.apiKey}&units=metric`;
+
+        this.loading.classList.remove("hidden");
+        this.weatherInfo.classList.add("hidden");
+        this.errorMessage.classList.add("hidden");
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (data.cod !== 200) {
+                throw new Error(data.message);
             }
-        })
-        .catch(error => alert("Error fetching data"));
+
+            this.displayWeather(data);
+        } catch (error) {
+            this.showError(error.message);
+        } finally {
+            this.loading.classList.add("hidden");
+        }
+    }
+
+    displayWeather(data) {
+        const { name, main, weather } = data;
+        document.getElementById("cityName").innerText = `Weather in ${name}`;
+        document.getElementById("temperature").innerText = `Temperature: ${main.temp}°C`;
+        document.getElementById("humidity").innerText = `Humidity: ${main.humidity}%`;
+        document.getElementById("description").innerText = `Condition: ${weather[0].description}`;
+
+        this.weatherInfo.classList.remove("hidden");
+    }
+
+    showError(message) {
+        this.errorMessage.innerText = message;
+        this.errorMessage.classList.remove("hidden");
+    }
+
+    toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        this.themeToggle.innerText = document.body.classList.contains("dark-mode") ? "☀️ Light Mode" : "🌙 Dark Mode";
+    }
 }
 
-function displayWeather(data) {
-    const cityName = data.name;
-    const temperature = data.main.temp;
-    const humidity = data.main.humidity;
-    const description = data.weather[0].description;
-
-    // Update the UI
-    document.getElementById("cityName").innerText = `Weather in ${cityName}`;
-    document.getElementById("temperature").innerText = `Temperature: ${temperature}°C`;
-    document.getElementById("humidity").innerText = `Humidity: ${humidity}%`;
-    document.getElementById("description").innerText = `Condition: ${description}`;
-
-    // Show weather information
-    document.getElementById("weatherInfo").style.display = "block";
-}
+// Initialize the Weather App
+document.addEventListener("DOMContentLoaded", () => new WeatherApp());
